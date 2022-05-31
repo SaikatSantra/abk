@@ -1,0 +1,71 @@
+{% comment %}
+Shopify Wishlist
+Usage:
+- Markup: {%- render 'button-wishlist', product: product -%}
+- Place this snippet inside your existing product card snippet
+
+Parameters:
+- product: <Shopify product> (required)
+{% endcomment %}
+
+  <style scoped>
+    .icon {
+      fill: transparent;
+      stroke: #000000;
+      transition: fill 0.3s ease;
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+    }
+
+    .active .icon {
+      fill: #988b6a;
+      stroke: #000000;
+    }
+
+    svg.icon.icon-heart path {
+      fill: transparent;
+    }
+    .active svg.icon.icon-heart path {
+      fill: rgba(var(--color-button),var(--alpha-button-background));
+    }
+    button.wishlist_btn {
+      border: 1px solid rgba(var(--color-button));
+      color: rgba(var(--color-button));
+      margin-bottom: 10px;
+      height: 53.9999px;
+      color: #000;
+    }
+
+    button.wishlist_btn:hover {
+      background-color: transparent!important;
+      /* border-color: rgba(var(--color-button))!important; */
+      box-shadow: none!important;
+      border-width: 2px;
+    }
+    span.wishlist-text {
+      padding-right: 10px;
+    }
+  </style>
+
+
+{%- if product.handle != blank -%}
+{%- if customer -%}
+<button type="button" aria-label="Add to wishlist" class="wishlist_btn button button--full-width button--secondary" button-wishlist
+        data-product-image="{{ product.featured_image | img_url: '100x' }}"
+        data-product-vendor="{{ product.vendor }}"
+        data-product-price="{{ product.price |money }}"
+        data-product-handle="{{ product.handle }}"
+        data-product-title="{{ product.title }}"
+        >
+
+  <span class="wishlist-text">Favourite</span> {%- render 'icon-heart' -%}
+</button>
+{%- else -%}
+<button type="button" aria-label="Add to wishlist" class="wishlist_btn button button--full-width button--secondary" onclick="window.location='/account/login';">
+
+  <span class="wishlist-text">Favourite</span> {%- render 'icon-heart' -%}
+</button>
+{%- endif -%}
+{%- endif -%}
