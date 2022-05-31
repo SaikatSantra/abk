@@ -1,84 +1,81 @@
-class ProductForm extends HTMLElement {
-  constructor() {
-    super();   
+if (!customElements.get('product-form')) {
+  customElements.define('product-form', class ProductForm extends HTMLElement {
+    constructor() {
+      super();
 
-    this.form = this.querySelector('form');
-    this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
-    this.cartNotification = document.querySelector('cart-notification');
-  }
+      this.form = this.querySelector('form');
+      this.form.querySelector('[name=id]').disabled = false;
+      this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
+      this.cartNotification = document.querySelector('cart-notification');
+      this.submitButton = this.querySelector('[type="submit"]');
+    }
 
-  onSubmitHandler(evt) {
-    evt.preventDefault();
-    this.cartNotification.setActiveElement(document.activeElement);
-    
-    const submitButton = this.querySelector('[type="submit"]');
+    onSubmitHandler(evt) {
+      evt.preventDefault();
+      if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
 
-    submitButton.setAttribute('disabled', true);
-    submitButton.classList.add('loading');
+      this.handleErrorMessage();
+      this.cartNotification.setActiveElement(document.activeElement);
 
-    const body = JSON.stringify({
-      ...JSON.parse(serializeForm(this.form)),
-      sections: this.cartNotification.getSectionsToRender().map((section) => section.id),
-      sections_url: window.location.pathname
-    });
+      this.submitButton.setAttribute('aria-disabled', true);
+      this.submitButton.classList.add('loading');
+      this.querySelector('.loading-overlay__spinner').classList.remove('hidden');
 
-    fetch(`${routes.cart_add_url}`, { ...fetchConfig('javascript'), body })
-    .then((response) => response.json())
-    .then((parsedState) => {
-//         console.log(parsedState);
-      //       mini cart section render
-      fetch('/?sections=cart-items')
-      .then((response) => response.json())
-      .then((data) => {
-      
-//         document.getElementById("CartCount").innerHTML= data.item_count;
-        var SectionHtml = data['cart-items'] ;
-        var IDminiCart = document.getElementById("mini-cart");
-        var IDminiCartMask = document.getElementById("minibag_mask");
-        IDminiCart.innerHTML = SectionHtml;
-        IDminiCart.classList.add("show-minibag");
-        IDminiCart.classList.remove("hide-minibag");
-//         document.body.style.overflow = "hidden";
-        IDminiCartMask.style.display = 'block';
-        
+      const config = fetchConfig('javascript');
+      config.headers['X-Requested-With'] = 'XMLHttpRequest';
+      delete config.headers['Content-Type'];
 
-      });
-      console.log("notification off");
-              this.cartNotification.renderContents(parsedState);
-    })
-    
-    .catch((e) => {
-      console.error(e);
-    })
-      .finally(() => {
-        submitButton.classList.remove('loading');
-        submitButton.removeAttribute('disabled');
-      });
-  }
+      const formData = new FormData(this.form);
+      formData.append('sections', this.cartNotification.getSectionsToRender().map((section) => section.id));
+      formData.append('sections_url', window.location.pathname);
+      config.body = formData;
+
+      fetch(`${routes.cart_add_url}`, config)
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.status) {
+            this.handleErrorMessage(response.description);
+
+            const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
+            if (!soldOutMessage) return;
+            this.submitButton.setAttribute('aria-disabled', true);
+            this.submitButton.querySelector('span').classList.add('hidden');
+            soldOutMessage.classList.remove('hidden');
+            this.error = true;
+            return;
+          }
+
+          this.error = false;
+          const quickAddModal = this.closest('quick-add-modal');
+          if (quickAddModal) {
+            document.body.addEventListener('modalClosed', () => {
+              setTimeout(() => { this.cartNotification.renderContents(response) });
+            }, { once: true });
+            quickAddModal.hide(true);
+          } else {
+            this.cartNotification.renderContents(response);
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        })
+        .finally(() => {
+          this.submitButton.classList.remove('loading');
+          if (!this.error) this.submitButton.removeAttribute('aria-disabled');
+          this.querySelector('.loading-overlay__spinner').classList.add('hidden');
+        });
+    }
+
+    handleErrorMessage(errorMessage = false) {
+      this.errorMessageWrapper = this.errorMessageWrapper || this.querySelector('.product-form__error-message-wrapper');
+      if (!this.errorMessageWrapper) return;
+      this.errorMessage = this.errorMessage || this.errorMessageWrapper.querySelector('.product-form__error-message');
+
+      this.errorMessageWrapper.toggleAttribute('hidden', !errorMessage);
+
+      if (errorMessage) {
+        this.errorMessage.textContent = errorMessage;
+      }
+    }
+  });
 }
-
-customElements.define('product-form', ProductForm);
-
-// Added by Divy Start
-// Btn Plus Click event to prevent click for more than available quantity
-
-$('.btn-plus').on('click',function(){
-  var osQty = $('#qty_inventory_track').html();
-  var qtyInput = $('.quantity__input').val();
-  
-  if($("#qty_inventory_track").length == 0) {
-	var osQty = $('.inventory-container p strong').html();
-  }
-  
-  if($('.inventory-container').hasClass('out-of-stock')){
-  	$('.quantity__input').val(1);
-    return false;
-  }
-  
-  if(qtyInput > parseInt(osQty)){
-    $('.quantity__input').val(osQty);
-  	return false;
-  }
-	
-})
-// Added by Divy End

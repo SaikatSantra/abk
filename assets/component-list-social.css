@@ -4,7 +4,7 @@
   justify-content: flex-end;
 }
 
-@media only screen and (max-width: 989px) {
+@media only screen and (max-width: 749px) {
   .list-social {
     justify-content: center;
   }
@@ -19,6 +19,7 @@
   align-items: center;
   display: flex;
   padding: 1.3rem;
+  color: rgb(var(--color-foreground));
 }
 
 .list-social__link:hover .icon {
