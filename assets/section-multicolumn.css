@@ -10,7 +10,7 @@
   margin-top: 0;
 }
 
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 989px) {
   .multicolumn .title-wrapper-with-link {
     margin-bottom: 3rem;
   }
@@ -18,7 +18,12 @@
   .multicolumn .page-width {
     padding-left: 0;
     padding-right: 0;
+
   }
+}
+
+.collection.page-width.page-width-desktop.aos-init.aos-animate {
+    
 }
 
 .multicolumn-card__image-wrapper--third-width {
@@ -40,7 +45,7 @@
   margin-top: 1.5rem;
 }
 
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 990px) {
   .multicolumn .button {
     margin-top: 4rem;
   }
@@ -98,7 +103,7 @@
   transform: translateX(-50%);
 }
 
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 989px) {
   .multicolumn-list {
     margin: 0;
     width: 100%;
@@ -111,7 +116,7 @@
 }
 
 
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 990px) {
   .multicolumn-list.slider,
   .multicolumn-list.grid--4-col-desktop {
     padding: 0;
@@ -169,7 +174,7 @@
   padding-right: 2.5rem;
 }
 
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 989px) {
   .background-none .slider .multicolumn-card__info {
     padding-bottom: 1rem;
   }
@@ -179,7 +184,7 @@
   }
 }
 
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 990px) {
   .background-none .multicolumn-card__image-wrapper {
     margin-left: 1.5rem;
     margin-right: 1.5rem;

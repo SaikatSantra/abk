@@ -81,7 +81,7 @@
         {{ form.errors | default_errors }}
       {%- endif -%}
 
-      <div class="field">        
+      <div class="field account-login">
         <input
           type="email"
           name="customer[email]"
@@ -100,7 +100,7 @@
       </div>
 
       {%- if form.password_needed -%}
-        <div class="field">          
+        <div class="field account-login">
           <input
             type="password"
             value=""
@@ -117,7 +117,7 @@
           </label>
         </div>
 
-        <a href="#recover">
+        <a href="#recover" class = "account-links">
           {{ 'customer.login_page.forgot_password' | t }}
         </a>
       {%- endif -%}
@@ -126,13 +126,13 @@
         {{ 'customer.login_page.sign_in' | t }}
       </button>
 
-      <a href="{{ routes.account_register_url }}">
+      <a href="{{ routes.account_register_url }}" class = "account-links">
         {{ 'customer.login_page.create_account' | t }}
       </a>
-      
+
     {%- endform -%}
   </div>
-  
+
   {%- if shop.checkout.guest_login -%}
     <div>
       <hr>

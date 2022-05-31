@@ -32,13 +32,13 @@ class CartNotification extends HTMLElement {
   }
 
   renderContents(parsedState) {
-      this.cartItemKey = parsedState.key;
+      this.productId = parsedState.id;
       this.getSectionsToRender().forEach((section => {
         document.getElementById(section.id).innerHTML =
           this.getSectionInnerHTML(parsedState.sections[section.id], section.selector);
       }));
 
-      if (this.header) this.header.reveal();
+      this.header?.reveal();
       this.open();
   }
 
@@ -46,7 +46,7 @@ class CartNotification extends HTMLElement {
     return [
       {
         id: 'cart-notification-product',
-        selector: `[id="cart-notification-product-${this.cartItemKey}"]`,
+        selector: `#cart-notification-product-${this.productId}`,
       },
       {
         id: 'cart-notification-button'
@@ -66,7 +66,7 @@ class CartNotification extends HTMLElement {
   handleBodyClick(evt) {
     const target = evt.target;
     if (target !== this.notification && !target.closest('cart-notification')) {
-      const disclosure = target.closest('details-disclosure, header-menu');
+      const disclosure = target.closest('details-disclosure');
       this.activeElement = disclosure ? disclosure.querySelector('summary') : null;
       this.close();
     }
